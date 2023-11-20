@@ -1,0 +1,38 @@
+.select-option {
+	width: 90px;
+	height: 45px;
+}
+
+.ant-btn-primary.ant-btn-dangerous {
+	background-color: #007bff!important;
+}
+
+.text-field {
+	margin: 8px!important;
+}
+
+.filters-name {
+	width: 180px;
+}
+
+.resource-type {
+	width: 150px;
+}
+
+.filter-field {
+	margin: 12px !important;
+}
+
+.pointer {
+	cursor: pointer;
+	margin: 6px;
+}
+
+.create-pipeline-btn {
+	color: white;
+}
+
+.create-pipeline-btn:hover {
+	color: white;
+	text-decoration: none;
+}
