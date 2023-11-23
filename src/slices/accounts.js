@@ -13,9 +13,9 @@ export const retrieveAccounts = createAsyncThunk(
 
 export const addAccount = createAsyncThunk(
   "accounts/",
-  async ({accountid, accounttype, description, aws_access_key_id, aws_secret_access_key, aws_region}) => {
-    console.log("in slices", accountid, accounttype, description, aws_access_key_id, aws_secret_access_key, aws_region)
-    const res = await AccountsDataService.addAccount(accountid, accounttype, description, aws_access_key_id, aws_secret_access_key, aws_region);
+  async ({accounttype, description, aws_access_key_id, aws_secret_access_key, aws_region}) => {
+    console.log("in slices", accounttype, description, aws_access_key_id, aws_secret_access_key, aws_region)
+    const res = await AccountsDataService.addAccount(accounttype, description, aws_access_key_id, aws_secret_access_key, aws_region);
     return res.data;
   }
 );

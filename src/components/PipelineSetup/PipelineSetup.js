@@ -19,37 +19,19 @@ import Typography from '@mui/material/Typography';
 const steps = ['Pipeline info', 'Select Filters', 'Schedule', 'Summary'];
 
 const PipelineSetup = () => {
-  // accountid, cloudAccID, pipelineName, policies, schedule, enabled
   const dispatch = useDispatch();
 
-  const [screen1Info, setScreen1Info] = useState({plName: '', account: '', regions: []})
+  const [screen1Info, setScreen1Info] = useState({plName: '', account: '', regions: [], accountName: ''})
   const [screen2Info, setScreen2Info] = useState({policies: [], policyNames: []})
   const [timerValue, setValue] = useState('30 5 * * *')
-  const [filterValues, setFilterValues] = useState({s3: [{filter: 'name', name: 'xyz', dummyKey: 'dummy-hi'}, {filter: 'createdBy', user: 'Monisha'}]})
-  // const [filterValues, setFilterValues] = useState({})
 
   const [allAccountsList, setAccountsList] = useState([]);
   const [policiesList, setPoliciesList] = useState([]);
-  const [filterSchema, setFilterSchema] = useState({});
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
 
-  const [selectedResource, setSelectedResource] = useState('s3');
-  
-  
-  const [filtersToAdd, setFiltersToAdd] = useState({filters: {}})
-  const [currentSelectedFilter, setCurrentSelectedFilter] = useState({filterName: "", filterSettings: {}})
-
   const initFetch = useCallback(() => {
-    dispatch(retrievePolicyStructure())
-    .unwrap()
-    .then(data => {
-      setFilterSchema(data)
-    })
-    .catch(e => {
-      console.log(e)
-    })
     retrieveAccountsDispatch(dispatch, setAccountsList)
     retrievePoliciesDispatch(dispatch, setPoliciesList)
   }, [dispatch])
@@ -57,176 +39,6 @@ const PipelineSetup = () => {
   useEffect(() => {
     initFetch()
   }, [initFetch])
-
-  const dropDown = function (options, selectedValue, onChangeHandler, resourceName, index=-1, resource='', disabled=false, key='') {
-    return (
-      <span key={resourceName}>
-        <FormControl size="small" className='resource-type'>
-          <InputLabel id='resource-name'>{resourceName}</InputLabel>
-          <Select disabled={disabled} key={resourceName} labelId={resourceName} value={selectedValue} label={resourceName} onChange={(e) => onChangeHandler(e, index, resource, key)}>
-            {options && options.map((item, index) => {
-              return (
-                <MenuItem key={index} value={item}>{item}</MenuItem>
-              )
-            })}
-          </Select>
-        </FormControl>
-      </span>
-    )
-  }
-
-  const textField = function(value, onChangeHandler, name, index, resource, filterIndex) {
-    return (
-      <TextField required value={value} key={index}
-        onChange={(e) => onChangeHandler(e, value, name, filterIndex, resource)} id={name}
-        label={name} variant="outlined" 
-        className="filter-txt" size="small" 
-      />
-    )
-  }
-
-  const onResourceChange = function() {
-
-  }
-
-  const deleteFilterOption = function(resource, filter, index) {
-    let newFilterValues = []
-    newFilterValues = filterValues[resource]
-    newFilterValues.splice(index, 1);
-    console.log(newFilterValues)
-    setFilterValues({...filterValues, [resource]: newFilterValues})
-  }
-
-  const onFilterAdd = function(resource) {
-    let resourceFilters = filterValues[resource]
-    resourceFilters.push({filter: ''})
-    console.log(resourceFilters)
-    setFilterValues({...filterValues, [resource]: resourceFilters})
-  }
-
-  const onFilterChange = function(e, index, resource) {
-    let filterList = getFilterKeys(resource, e.target.value);
-    let newFilterValues = filterValues[resource]
-    newFilterValues[index].filter = e.target.value
-    filterList.forEach((fl) => {
-      newFilterValues[index][fl] = ''
-    });
-    setFilterValues({...filterValues, [resource]: newFilterValues})
-  }
-
-  const getFilterKeys = function (resource, filter) {
-    return filterSchema[resource].filterDetails[filter].filterList
-  }
-
-  const onFilterValueChange = function(e, oldValue, name, index, resource) {
-    let newFilterValues = filterValues[resource]
-    newFilterValues[index][name] = e.target.value
-    setFilterValues({...filterValues, [resource]: newFilterValues})
-    validateFilterValues();
-  }
-
-  const getIntegerKeys = function() {
-    let integerKeys = []
-    let resources = Object.keys(filterSchema);
-    console.log(resources);
-    resources.forEach((resource) => {
-      filterSchema[resource].filterOptions.forEach((option) => {
-        console.log(resource, option)
-        console.log()
-        filterSchema[resource].filterDetails[option].filterList.forEach((filter) => {
-          let filterInfo = filterSchema[resource].filterDetails[option].filterInfo[filter]
-          if (filterInfo.type == 'int') {
-            let key = resource + '-' + option + '-' + filter
-            if (filterInfo.validations) {
-              integerKeys.push({key: key, validations: filterInfo.validations})
-            }
-          }
-        })
-      })
-    })
-    return integerKeys
-  }
-
-  const validateFilterValues = function() {
-    console.log("validateFilterValues")
-    // let integerKeys = getIntegerKeys()
-    // console.log(integerKeys)
-
-  }
-
-  const deleteResource = function(resource) {
-    let newFilterValues = filterValues[resource];
-    delete newFilterValues[resource]
-    console.log(filterValues)
-    setFilterValues({filterValues: newFilterValues})
-  }
-
-  const onDropDownValueChange = function(e, index, resource, key) {
-    console.log(e.target.value, index, resource, key)
-    let newFilterValues = filterValues[resource];
-    console.log(newFilterValues)
-    newFilterValues[index][key] = e.target.value
-    setFilterValues({...filterValues, [resource]: newFilterValues})
-
-  }
-  const renderFilters = function() {
-    return Object.keys(filterValues).map((resource, index) => {
-      let filterElements = filterValues[resource].map((filterValue, index2) => {
-        let filterOptionsList = []
-        if (filterValue.filter != '')
-          filterOptionsList = filterSchema[resource] && filterSchema[resource].filterDetails[filterValue.filter].filterList 
-        let optionsElement = []
-        filterOptionsList && filterOptionsList.forEach((option, index3) => {
-          if(option != '') {
-            let metadata = getFilterMetadata(resource, filterValue.filter, option)
-            if(metadata && metadata.type === 'dropdown') {
-              optionsElement.push(
-                dropDown(metadata.options, filterValue[option] , onDropDownValueChange, metadata.displayName, index2, resource, false, option)
-              )
-            }
-            if(metadata && metadata.type === 'freetext') {
-              optionsElement.push(
-                textField(filterValue[option], onFilterValueChange, option, index3, resource, index2)
-              )
-            } else if(metadata && metadata.type === 'int') {
-              optionsElement.push(
-                textField(filterValue[option], onFilterValueChange, option, index3, resource, index2)
-              )            
-            }
-          }
-        })
-        if (filterSchema[resource] && filterSchema[resource].filterOptions) {
-          return (
-            <div key={index2}>
-              <GrFormClose className="pointer margin-6 " onClick={(e) => deleteFilterOption(resource, filterValue.filter, index2)} />
-              {dropDown(filterSchema[resource].filterOptions, filterValue.filter, onFilterChange, 'Filter', index2, resource)}
-              {optionsElement}
-            </div>
-          )
-        }
-      })
-
-      return(
-        <div key={index}>
-          <GrFormClose className="pointer margin-6 " onClick={(e) => deleteResource(resource)} />
-          {dropDown(Object.keys(filterSchema), resource, onResourceChange, 'Resource', '', '', true)} 
-          <GrAdd className="pointer margin-6" onClick={() => onFilterAdd(resource)} /><br />
-          <br />
-          {filterElements}
-          <br /><br />
-          
-        </div>
-
-      )
-    })
-  }
-
-  const getFilterMetadata = function(resource, filterName, filterKey, flag=false) {
-    if (filterSchema[resource] && filterSchema[resource].filterOptions.indexOf(filterName) != -1) {
-      let filterDetails = filterSchema[resource].filterDetails[filterName];
-      return filterDetails.filterInfo[filterKey]
-    }
-  }
 
   const isStepOptional = (step) => {
     return false;
@@ -236,8 +48,10 @@ const PipelineSetup = () => {
     return skipped.has(step);
   };
 
-  const handleScreen1Change = (e, key) => {
-    setScreen1Info({...screen1Info, [key]: e.target.value})
+  const handleScreen1Change = (e) => {
+    let accid = e.target.value;
+    let accountinfo = allAccountsList.find((acc) => { return acc.cloudaccountid == accid})
+    setScreen1Info({...screen1Info, account: e.target.value, accountName: accountinfo.description})
   }
   const updateRegions = (e) => {
     let regions = screen1Info.regions;
@@ -268,32 +82,25 @@ const PipelineSetup = () => {
 
   const redirectPage = function() {
     alert("Pipeline Created");
-
   }
 
   const handleNext = () => {
-    console.log("Heere")
-    console.log(activeStep)
     let flag = true
     if (activeStep == 0) {
-      console.log("In step 1")
       if (screen1Info.plName == '' || screen1Info.account == '' || screen1Info.regions.length == 0) {
         alert("Enter all fields")
         flag = false;
       }
-
     }
     if (activeStep == 1) {
-      console.log("In step 2")
       if (screen2Info.policies.length == 0) {
         alert("Enter all fields")
         flag = false;
       }
-
     }
 
     if(activeStep == 3) {
-      addPipelineDispatch(dispatch, "1033", screen1Info.account, screen1Info.plName, screen2Info.policies, timerValue, screen1Info.regions, true, redirectPage)
+      addPipelineDispatch(dispatch, screen1Info.account, screen1Info.plName, screen2Info.policies, timerValue, screen1Info.regions, true, redirectPage)
     }
 
     if (flag) {
@@ -325,60 +132,16 @@ const PipelineSetup = () => {
     });
   };
 
-  const handleChange = (e) => {
-    setSelectedResource(e.target.value)
-  }
-
-  const addFilters = (e) => {
-    console.log(e.target.value)
-    console.log(selectedResource)
-    let newFilterValues = []
-    if (filterValues[selectedResource]) {
-      alert('Filter already available. edit it')
-    } else {
-      setFilterValues({...filterValues, [selectedResource]: [{filter: ''}]})
-    }
-  }
-
   const handleReset = () => {
-    setScreen1Info({plName: '', regions: [], account: ''})
+    setScreen1Info({plName: '', regions: [], account: '', accountName: ''})
     setScreen2Info({policies: []})
     setValue("30 5 * * *")
     setActiveStep(0);
 
   };
 
-  const resources = ['s3', 'ec2']
-
-  let currentFilter = []
-
   const editPipeline = function (pipelineID) {
     console.log('edit ', pipelineID)
-  }
-
-  const deletePipeline = function (pipelineID) {
-    console.log('delete ', pipelineID)
-  }
-
-  const getFilters = function(filters, index, filter) {
-    const currentFilters = filters[index][filter];
-    let element = currentFilters.map((filter, index2) => {
-      return (
-        <div key={index2}>
-          {filter.name}
-          {filter.filters.map((filValues, index3) => {
-            return (
-              <div key={index3}>
-                {filValues.name}: {filValues.value} {filValues.prop}
-              </div>
-            )
-          })}
-          <br />
-        </div>
-      )
-    })
-
-    return element
   }
 
   let screen1 = function(step) {
@@ -389,23 +152,27 @@ const PipelineSetup = () => {
       <div> <br /><br />
         <TextField placeholder="Pipeline name" value={screen1Info.plName} onChange={(e) => handlePlNameChange(e)} id="pipeline-name" label="Pipeline Name" variant="outlined" className="text-field" size="small" /> 
         <br /><br />
+        <FormControl>
+          <Select
+            id='select-account'
+            className='radio-field'
+            value={screen1Info.accountName}
+            onChange={(e) => handleScreen1Change(e)}
+            renderValue={(selectedAccount) => selectedAccount}
+          >
+          <MenuItem value="" disabled>Select an option</MenuItem>
+          {
+            allAccountsList.map((account, index) => {
+              return(
+                <MenuItem key={index} value={account.cloudaccountid} name={account.cloudaccountid}>{account.description}</MenuItem>
+              )
+            })
+          }
+          </Select>
+        </FormControl>
 
-        <select
-          className='radio-field'
-          label="Account"
-          value={screen1Info.account}
-          onChange={(event) => handleScreen1Change(event, 'account')}
-        >
-          <option value="" disabled>
-            Account
-          </option>
-          {allAccountsList.map((option, index) => (
-            <option key={index} value={option.description}>
-              {option.description}
-            </option>
-          ))}
-        </select>        
         <br /><br />
+
         {/* TODO: Add option to select all */}
         <FormControl size="small" component="fieldset">
           <InputLabel id='region-name'>Region</InputLabel>
@@ -430,55 +197,6 @@ const PipelineSetup = () => {
         </FormControl>
       </div>
 
-    )
-  }
-
-  let screen2temp = function(step) {
-    return (
-      step == 1 && 
-      <div>
-        <Typography sx={{ mt: 2, mb: 1 }}>Step 2</Typography>
-        <FormControl size="small" className='resource-type'>
-          <InputLabel id='resource-name'>Resource</InputLabel>
-          <Select labelId='select-resource' value={selectedResource} label='Resource' onChange={handleChange}>
-            {resources.map((item, index) => {
-              return (
-                <MenuItem key={index} value={item}>{item}</MenuItem>
-              )
-            })}
-          </Select>
-        </FormControl>
-        <GrAdd className="pointer margin-6" onClick={(e) => addFilters(e)} /><br />
-        <br /><br /><br />
-
-        {renderFilters()}
-
-        <br /><br /><br />
-        {
-          currentFilter.length > 0 && 
-          currentFilter.map((resourceFilter, index) => {
-            return (
-              <div key={index}>
-                {resourceFilter.resource}
-                {
-                  resourceFilter.filters.map((filters, index2) => {
-                    return (
-                      <div key={index2}>
-                        {
-                          Object.keys(filters).map((filter, index3) => {
-                            return getFilters(resourceFilter.filters, index2, filter)
-                          })
-                        }
-                        
-                      </div>
-                    )
-                  })
-                }
-              </div>
-            )
-          })
-        }
-      </div>
     )
   }
 
@@ -533,7 +251,7 @@ const PipelineSetup = () => {
         Overview - summary
         <br /><br />
         <strong>Pipeline name: </strong>{screen1Info.plName}<br /><br />
-        <strong>Account: </strong>{screen1Info.account} <br /><br />
+        <strong>Account: </strong>{screen1Info.accountName} <br /><br />
         <strong>Regions: </strong>{screen1Info.regions.join(", ")} <br /><br />
 
         <strong>Policies: </strong>  {screen2Info.policyNames.join(", ")}<br /><br />

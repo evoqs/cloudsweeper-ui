@@ -22,14 +22,6 @@ const LandingPage = () => {
 
   const dispatch = useDispatch();
 
-  const initFetch = useCallback(() => {
-    dispatch(retrieveUsers());
-  }, [dispatch])
-
-  useEffect(() => {
-    initFetch()
-  }, [initFetch])
-
   const setUserLogin = function(e) {
     setUser({ ...user, login: e.target.value });
   }

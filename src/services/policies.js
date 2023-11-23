@@ -2,7 +2,7 @@ import http from "../http-common";
 
 class PoliciesService {
   getAll() {
-    return http.get("/api/gw/accounts/1033/policies");
+    return http.get("/api/gw/policies");
   }
 
   getPolicyStructure() {
