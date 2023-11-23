@@ -28,7 +28,7 @@ const Accounts = () => {
     setRefreshPage(false)
   }
 
-  const initAWSCreds = {accessKey: '121', secret: 'sds', name: '1212111sd', region: 'test'} 
+  const initAWSCreds = {accessKey: '', secret: '', name: '', region: 'test'} 
   const [awsCreds, setAWSCreds] = useState(initAWSCreds);
 
   const handleAWSAccessChange = e => {
