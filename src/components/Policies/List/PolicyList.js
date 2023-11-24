@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-import { retrievePolicies } from "../../../slices/policies"
 import { userProfileDispatch, deletePolicyDispatch, retrievePoliciesDispatch } from "../../../utils/api-calls";
 import 'react-js-cron/dist/styles.css'
 import Menu from "../../Menu";
@@ -52,7 +51,7 @@ const PolicyList = () => {
   }
 
   let policiesListEl = function() {
-    if (policiesList.length == 0) {
+    if (policiesList.length === 0) {
       return(
         <div>
           No pipelines available
@@ -64,7 +63,7 @@ const PolicyList = () => {
           <div key={index}>
             {pl.policyid} - {pl.policyname} 
           {/* <GrEdit className="pointer" onClick={() => editPipeline(pl.policyid)} /> */}
-            {pl.policytype != 'Default' && <GrTrash className="pointer" onClick={() => deletePipeline(pl.policyid)} /> }
+            {pl.policytype !== 'Default' && <GrTrash className="pointer" onClick={() => deletePipeline(pl.policyid)} /> }
           </div>
         )
       })

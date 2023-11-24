@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userProfile } from "../../slices/home";
 import { retrieveAccountsDispatch, addAccountDispatch, deleteAccountDispatch } from "../../utils/api-calls";
 import Menu from "../Menu";
 import "./accounts.css";
-import { FormControl, FormLabel, FormControlLabel, RadioGroup, Radio, Box, FilledInput, Button, TextField } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { GrEdit, GrTrash } from "react-icons/gr";
 
 
@@ -13,7 +13,6 @@ const Accounts = () => {
     username: "",
     name: ""
   }
-  const users = useSelector(state => state.users);
   const dispatch = useDispatch();
   const [profile, setUserProfile] = useState(userProfileState);
   const [accountsList, setAccountsList] = useState([]);
@@ -66,13 +65,11 @@ const Accounts = () => {
     .catch(e => {
       console.log(e)
     });
-    // retrieveAccountsDispatch(dispatch, setAccountsList)
   }, [dispatch])
 
   useEffect(() => {
     initFetch()
   }, [initFetch])
-  console.log(accountsList)
   return (
     <div className="list row">
       <div className="col-md-1">
@@ -82,7 +79,7 @@ const Accounts = () => {
       </div>      
       <div className="col-md-10">
         <strong>Cloud Accounts</strong> <br />
-        { accountsList && accountsList != 'error' &&
+        { accountsList && accountsList !== 'error' &&
           accountsList.map((acc, index) => {
             return (
               <div key={index}>

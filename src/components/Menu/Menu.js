@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
-import { Box, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import "./menu.css";
 
 const Menu = () => {

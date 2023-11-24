@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userProfile } from "../../slices/home";
-import { Link } from "react-router-dom";
 import Menu from "../Menu";
 import "./home.css";
 
@@ -11,7 +10,6 @@ const Home = () => {
     name: ""
   }
 
-  const users = useSelector(state => state.users);
   const dispatch = useDispatch();
   const [profile, setUserProfile] = useState(userProfileState);
 

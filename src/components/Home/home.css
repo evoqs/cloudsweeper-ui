@@ -1,5 +1,5 @@
-.verticalLine: {
+.verticalLine {
   height: '100%';
-  width: 1;
+  width: 1px;
   backgroundColor: '#909090';
 }

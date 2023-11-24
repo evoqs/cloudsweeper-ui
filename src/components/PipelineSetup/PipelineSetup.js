@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { retrievePipelines, retrievePolicyStructure } from "../../slices/pipelines"
-import { retrieveAccountsDispatch, userProfileDispatch, retrievePoliciesDispatch, addPipelineDispatch } from "../../utils/api-calls";
+import { useDispatch } from "react-redux";
+import { retrieveAccountsDispatch, retrievePoliciesDispatch, addPipelineDispatch } from "../../utils/api-calls";
 import { Cron } from 'react-js-cron'
 import 'react-js-cron/dist/styles.css'
 import Menu from "../Menu";
 import "./pipelineSetup.css";
-import { FormControl, InputLabel, Select, MenuItem, Button, TextField, OutlinedInput, Checkbox, ListItemText } from '@mui/material';
-import { Radio, RadioGroup, FormControlLabel, FormLabel } from '@mui/material';
-import { GrEdit, GrTrash, GrAdd, GrFormClose } from "react-icons/gr";
+import { FormControl, InputLabel, Select, MenuItem, Button, TextField, Checkbox } from '@mui/material';
+import { FormControlLabel } from '@mui/material';
 
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
@@ -50,12 +48,12 @@ const PipelineSetup = () => {
 
   const handleScreen1Change = (e) => {
     let accid = e.target.value;
-    let accountinfo = allAccountsList.find((acc) => { return acc.cloudaccountid == accid})
+    let accountinfo = allAccountsList.find((acc) => { return acc.cloudaccountid === accid})
     setScreen1Info({...screen1Info, account: e.target.value, accountName: accountinfo.description})
   }
   const updateRegions = (e) => {
     let regions = screen1Info.regions;
-    if (regions.indexOf(e.target.value) == -1) {
+    if (regions.indexOf(e.target.value) === -1) {
       regions.push(e.target.value)
     } else {
       regions.splice(regions.indexOf(e.target.value), 1);
@@ -66,7 +64,7 @@ const PipelineSetup = () => {
   const updateSelectedPolicies = (e, policy) => {
     let policies = screen2Info.policies;
     let policyNames = screen2Info.policyNames;
-    if(policies.indexOf(policy.policyid) == -1) {
+    if(policies.indexOf(policy.policyid) === -1) {
       policies.push(policy.policyid)
       policyNames.push(policy.policyname)
     } else {
@@ -86,20 +84,20 @@ const PipelineSetup = () => {
 
   const handleNext = () => {
     let flag = true
-    if (activeStep == 0) {
-      if (screen1Info.plName == '' || screen1Info.account == '' || screen1Info.regions.length == 0) {
+    if (activeStep === 0) {
+      if (screen1Info.plName === '' || screen1Info.account === '' || screen1Info.regions.length === 0) {
         alert("Enter all fields")
         flag = false;
       }
     }
-    if (activeStep == 1) {
-      if (screen2Info.policies.length == 0) {
+    if (activeStep === 1) {
+      if (screen2Info.policies.length === 0) {
         alert("Enter all fields")
         flag = false;
       }
     }
 
-    if(activeStep == 3) {
+    if(activeStep === 3) {
       addPipelineDispatch(dispatch, screen1Info.account, screen1Info.plName, screen2Info.policies, timerValue, screen1Info.regions, true, redirectPage)
     }
 
@@ -148,7 +146,7 @@ const PipelineSetup = () => {
     // TODO: Fetch from API
     const regions = ['us-east', 'us-west', 'eu-lon']
     return (
-      step == 0 && 
+      step === 0 && 
       <div> <br /><br />
         <TextField placeholder="Pipeline name" value={screen1Info.plName} onChange={(e) => handlePlNameChange(e)} id="pipeline-name" label="Pipeline Name" variant="outlined" className="text-field" size="small" /> 
         <br /><br />
@@ -202,7 +200,7 @@ const PipelineSetup = () => {
 
   let screen2 = function(step) {
     return (
-      step == 1 && 
+      step === 1 && 
       <div>
         <br />
         <strong>Select policies</strong>
@@ -234,7 +232,7 @@ const PipelineSetup = () => {
   }
 
   let screen3 = function(step) {
-    return (step == 2 && 
+    return (step === 2 && 
       <div>
         <Typography sx={{ mt: 2, mb: 1 }}>Step 3</Typography>
         <Cron value={timerValue} setValue={setValue}  /> <br />
@@ -245,7 +243,7 @@ const PipelineSetup = () => {
   }
 
   let screen4 = function(step) {
-    return (step == 3 && 
+    return (step === 3 && 
       <div>
         <Typography sx={{ mt: 2, mb: 1 }}>Step 4</Typography>
         Overview - summary

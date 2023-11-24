@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userProfileDispatch, retrievePipelinesDispatch, deletePipelineDispatch } from "../../utils/api-calls";
 import 'react-js-cron/dist/styles.css'
 import Menu from "../Menu";
@@ -49,7 +49,7 @@ const Pipeline = () => {
   }
 
   let pipelinesListEl = function() {
-    if (pipelinesList.length == 0) {
+    if (pipelinesList.length === 0) {
       return(
         <div>
           No pipelines available

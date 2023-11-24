@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { retrieveUsers, login } from "../../slices/landingPage";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { login } from "../../slices/landingPage";
 import { Navigate } from "react-router-dom";
 import Grid from '@mui/material/Grid';
-import { ImageList, ImageListItem, FilledInput, IconButton, InputAdornment, Button, TextField } from '@mui/material';
+import { FilledInput, IconButton, InputAdornment, Button, TextField } from '@mui/material';
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import "./landing-page.css";
@@ -77,7 +77,7 @@ const LandingPage = () => {
           /> <br />
             <Button type="submit" variant="contained" onClick={loginUser}>Login</Button> <br />
             {user.succesfulLogin && <Navigate to='/home'  /> }
-            {user.succesfulLogin == false && <div> User auth failed</div>}
+            {user.succesfulLogin === false && <div> User auth failed</div>}
           <br />
           New User? Register
         </div>
