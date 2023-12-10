@@ -3,14 +3,6 @@ import HomeDataService from "../services/home";
 
 const initialState = [];
 
-export const retrieveUsers = createAsyncThunk(
-  "home/retrieve",
-  async () => {
-    const res = await HomeDataService.getAll();
-    return res.data;
-  }
-);
-
 export const userProfile = createAsyncThunk(
   "home/profile",
   async () => {
@@ -23,11 +15,8 @@ const homeSlice = createSlice({
   name: "home",
   initialState,
   extraReducers: {
-    [retrieveUsers.fulfilled]: (state, action) => {
-      return [...action.payload];
-    },
     [userProfile.fulfilled]: (state, action) => {
-      return [...action.payload]
+      return action.payload
     }
   },
 });

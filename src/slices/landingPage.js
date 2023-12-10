@@ -15,11 +15,19 @@ export const login = createAsyncThunk(
   "landingPage/login",
   async (userInfo) => {
     const res = await LandingDataService.login(userInfo);
-    console.log(res)
+    console.log(res.data, "slice")
     return res.data;
   }
 );
 
+export const register = createAsyncThunk(
+  "landingPage/register",
+  async (userInfo) => {
+    const res = await LandingDataService.register(userInfo);
+    console.log(res.data, "slice..")
+    return res.data;
+  }
+);
 
 const landingPageSlice = createSlice({
   name: "landingPage",
@@ -27,6 +35,14 @@ const landingPageSlice = createSlice({
   extraReducers: {
     [retrieveUsers.fulfilled]: (state, action) => {
       return [...action.payload];
+    },
+    [login.fulfilled]: (state, action) => {
+      console.log(action, "reducer")
+      return action.payload
+    },
+    [register.fulfilled]: (state, action) => {
+      console.log(action, "reducer")
+      return action.payload
     }
   },
 });

@@ -20,7 +20,7 @@ export const retrievePolicyStructure = createAsyncThunk(
 );
 
 export const deletePolicy = createAsyncThunk(
-  "pipelines/delete",
+  "policies/delete",
   async ({id}) => {
     console.log("Deleting policy", id)
     const res = await PoliciesService.deletePolicy(id);
@@ -28,6 +28,15 @@ export const deletePolicy = createAsyncThunk(
   }
 );
 
+export const addPolicy = createAsyncThunk(
+  "policies/add",
+  async({policyName, definition}) => {
+    console.log(policyName, definition)
+    const res = await PoliciesService.addPolicy(policyName, definition)
+    return res.data
+  }
+
+)
 
 const policiesSlice = createSlice({
   name: "policies",
@@ -38,7 +47,10 @@ const policiesSlice = createSlice({
     },
     [retrievePolicyStructure.fulfilled]: (state, action) => {
       return [...action.payload]
-    }    
+    },
+    [addPolicy.fulfilled]: (state, action) => {
+      return [...action.payload]
+    }
   },
 });
 

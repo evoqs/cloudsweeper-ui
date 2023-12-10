@@ -9,17 +9,13 @@ class PoliciesService {
     return http.get("/api/gw/dummy-json");
   }
 
-  addPolicy(accountid, policyname, execregions, policydefinition) {
+  addPolicy(policyname, policydefinition) {
     let data = {
-      accountid,  // str
       policyname, // str
-      execregions, // array of str
-      policydefinition: policydefinition
+      policydefinition: JSON.stringify({'policies': policydefinition})
     }
     return http.post("/api/gw/policy", data)
   }
-
-// '{ "policydefinition": "{\"policies\":[{\"name\":\"my-first-policy\",\"resource\":\"aws.ec2\",\"filters\":[{\"tag:Custodian\":\"present\"}]}]}"}' http://127.0.0.1:8000/policy
 
   deletePolicy(policyID) {
     return http.delete("/api/gw/policy/" + policyID)

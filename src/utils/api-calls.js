@@ -1,6 +1,7 @@
 import { retrieveAccounts, addAccount, deleteAccount } from "../slices/accounts";
 import { retrievePipelines, deletePipeline, addPipeline } from "../slices/pipelines"
 import { retrievePolicies, deletePolicy } from "../slices/policies"
+import { retrieveReports } from "../slices/reports";
 import { userProfile } from "../slices/home";
 
 // fetch all accounts
@@ -109,7 +110,6 @@ const retrievePoliciesDispatch = function (dispatch, setPoliciesList) {
 // add policies
 
 // delete policies
-
 const deletePolicyDispatch = function (dispatch, {id}, reloadPage) {
   console.log(reloadPage)
   dispatch(deletePolicy({id}))
@@ -117,6 +117,18 @@ const deletePolicyDispatch = function (dispatch, {id}, reloadPage) {
   .then(data => {
     console.log("deleted policy")
     reloadPage()
+  })
+  .catch(e => {
+    console.log(e)
+  })
+}
+
+// fetch policies
+const retrieveReportsDispatch = function (dispatch, pipelineID, setPoliciesList) {
+  dispatch(retrieveReports({pipelineID}))
+  .unwrap()
+  .then(data => {
+    setPoliciesList(data)
   })
   .catch(e => {
     console.log(e)
@@ -134,5 +146,6 @@ export {
   addPipelineDispatch,
   deletePipelineDispatch,
   retrievePoliciesDispatch,
-  deletePolicyDispatch
+  deletePolicyDispatch,
+  retrieveReportsDispatch
 }

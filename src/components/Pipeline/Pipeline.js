@@ -1,22 +1,48 @@
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText
+} from '@mui/material';
+
+import Reports from "../Reports";
 import React, { useState, useEffect, useCallback } from "react";
+import { Grid, Paper, Typography } from '@mui/material';
+
 import { useDispatch } from "react-redux";
-import { userProfileDispatch, retrievePipelinesDispatch, deletePipelineDispatch } from "../../utils/api-calls";
+import { userProfileDispatch, retrievePipelinesDispatch, deletePipelineDispatch, retrievePoliciesDispatch } from "../../utils/api-calls";
 import 'react-js-cron/dist/styles.css'
 import Menu from "../Menu";
 import "./pipeline.css";
 import { Button } from '@mui/material';
 
-import { GrEdit, GrTrash } from "react-icons/gr";
+import { GrEdit, GrTrash, GrArticle } from "react-icons/gr";
 
 const Pipeline = () => {
   const userProfileState = {
     username: "",
     name: ""
   } 
+
+  const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
   const [profile, setUserProfile] = useState(userProfileState);
   const [pipelinesList, setPipelinesList] = useState([]);
+  const [policiesList, setPoliciesList] = useState([]);
   const [refreshPage, setRefreshPage] = useState(true);
+  const [reportPL, setReportPL] = useState({})
+
+  const handleClickOpen = (pl) => {
+    setReportPL(pl)
+    setOpen(true);
+  };
+
+  const handleClose = (e) => {
+    setOpen(false);
+  };
+
+
   const reloadPage = function () {
     setRefreshPage(true)
   }
@@ -28,6 +54,7 @@ const Pipeline = () => {
 
   const initFetch = useCallback(() => {
     userProfileDispatch(dispatch, setUserProfile, profile)
+    retrievePoliciesDispatch(dispatch, setPoliciesList)
   }, [dispatch])
 
 
@@ -48,6 +75,12 @@ const Pipeline = () => {
     }
   }
 
+  const showReport = function(pl) {
+    console.log(pl)
+    setReportPL(pl)
+    alert(pl.policies.join(', '))
+  }
+
   let pipelinesListEl = function() {
     if (pipelinesList.length === 0) {
       return(
@@ -58,16 +91,20 @@ const Pipeline = () => {
     } else {
       return pipelinesList.map((pl, index) => {
         return (
-          <div key={index}>
-            {pl.piplineid} - {pl.piplinename} 
-            {!pl.default && <GrTrash className="pointer" onClick={() => delPipeline(pl.piplineid, pl.default)}  />}
-            {/* pl.default && <GrTrash className='pointer' onClick={() => delPipeline(pl.piplineid, pl.default)} /> */}
-            
-          {/* <GrEdit className="pointer" onClick={() => editPipeline(pl.piplineid)} /> */}
-            
+          <div key={index} className={index % 2 == 0 ? 'even-line pipeline' : 'odd-line pipeline'}>
+            <Grid container spacing={2}>
+              <Grid item xs={10}>
+                {pl.piplinename}
+              </Grid>
+              <Grid item xs={2}>
+                <GrArticle className="pointer" onClick={(e) => handleClickOpen(pl)} />
+                {!pl.default && <GrTrash className="pointer" onClick={() => delPipeline(pl.piplineid, pl.default)}  />}
+              </Grid>
+            </Grid>
           </div>
         )
       })
+
 
     }
   }
@@ -80,10 +117,27 @@ const Pipeline = () => {
       <div className="col-md-1 verticalLine">
       </div>      
       <div className="col-md-10">
-
         <Button type="submit" variant="contained"><a href="/pipelines/create" className="create-pipeline-btn">Create Pipeline</a></Button><br /><br />
         {pipelinesListEl()}        
       </div>
+
+      <Dialog
+        open={open}
+        onClose={(e) => handleClose(e)}
+        className="reports-container"
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Reports"}
+        </DialogTitle>
+        <DialogContent>
+          <Reports pipeline={reportPL} policies={policiesList} />
+        </DialogContent>
+      </Dialog>
+
+
+
     </div>
   );
 };

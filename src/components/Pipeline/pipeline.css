@@ -36,3 +36,25 @@
 	color: white;
 	text-decoration: none;
 }
+
+.odd-line {
+	background-color: #f3f4f8;
+}
+
+.even-line {
+	background-color: #d2d4da;
+}
+
+.pipeline {
+	width: 600px;
+	margin: 6px;
+	padding: 3px;
+	padding-left: 12px;
+	/*margin-left: 6px;*/
+
+}
+
+.reports-container {
+	width: 1500px;
+	height: 800px;
+}
