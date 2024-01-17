@@ -148,7 +148,7 @@ const retrieveReportsDispatch = function (dispatch, pipelineID, setPoliciesList,
           if(!policyFilters[key]) {
             policyFilters[key] = []
           }
-          if(policyFilters[key].indexOf(result[key]) == -1) {
+          if(policyFilters[key].indexOf(result[key]) === -1) {
             policyFilters[key].push(result[key])
           }
         })

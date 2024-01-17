@@ -7,22 +7,17 @@ import {
 } from '@mui/material';
 
 import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { retrievePolicyStructure } from "../../../slices/pipelines"
 import { addPolicy } from "../../../slices/policies";
-import { retrieveAccountsDispatch, userProfileDispatch } from "../../../utils/api-calls";
-import { Cron } from 'react-js-cron'
 import 'react-js-cron/dist/styles.css'
 import Menu from "../../Menu";
 import "./policyCreate.css";
-import { FormControl, InputLabel, Select, MenuItem, Button, TextField, OutlinedInput, Checkbox, ListItemText } from '@mui/material';
-import { Radio, RadioGroup, FormControlLabel, FormLabel, FormGroup, Switch } from '@mui/material';
-import { GrEdit, GrTrash, GrAdd, GrFormClose } from "react-icons/gr";
+import { FormControl, InputLabel, Select, MenuItem, Button, TextField } from '@mui/material';
+import { GrAdd, GrFormClose } from "react-icons/gr";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-
 
 const PolicyCreate = () => {
   
@@ -31,13 +26,10 @@ const PolicyCreate = () => {
   const handleNameChange = (e) => {
     setPolicyName(e.target.value)
   }
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
   const handleClose = (e, value) => {
     console.log(value)
-    if (value == 'clear') {
+    if (value === 'clear') {
       setSelectedResource(tempValue)
       setFilterValues({[tempValue]: []})
       setFilterOps([])
@@ -56,9 +48,6 @@ const PolicyCreate = () => {
 
   const [filterSchema, setFilterSchema] = useState({});
   const [selectedResource, setSelectedResource] = useState('');
-  
-  const [filtersToAdd, setFiltersToAdd] = useState({filters: {}})
-  const [currentSelectedFilter, setCurrentSelectedFilter] = useState({filterName: "", filterSettings: {}})
 
   const initFetch = useCallback(() => {
     dispatch(retrievePolicyStructure())
@@ -70,7 +59,7 @@ const PolicyCreate = () => {
         data[res].filterOptions.forEach((opt) => {
           data[res].filterDetails[opt].filterList.forEach((fil) => {
             console.log(res, opt, fil, data[res].filterDetails[opt].filterInfo[fil].type)
-            if (types.indexOf(data[res].filterDetails[opt].filterInfo[fil].type) == -1) {
+            if (types.indexOf(data[res].filterDetails[opt].filterInfo[fil].type) === -1) {
               types.push(data[res].filterDetails[opt].filterInfo[fil].type)
             }
           })
@@ -130,9 +119,6 @@ const PolicyCreate = () => {
     )
   }
 
-  const onResourceChange = function() {
-
-  }
 
   const deleteFilterOption = function(resource, filter, index) {
     let newFilterValues = []
@@ -166,10 +152,6 @@ const PolicyCreate = () => {
     setFilterValues({...filterValues, [resource]: newFilterValues})
   }
 
-  const getFilterIDFromName = function(resource, filterName) {
-    return filterName
-  }
-
   const getFilterKeys = function (resource, filter) {
     return filterSchema[resource].filterDetails[filter].filterList
   }
@@ -177,10 +159,10 @@ const PolicyCreate = () => {
   const onFilterValueChange = function(e, oldValue, name, index, resource, type) {
     let newFilterValues = filterValues[resource]
     if(newFilterValues && newFilterValues[index]) {
-      if (type == 'date') {
+      if (type === 'date') {
         newFilterValues[index][name] = new Date(e.$y, e.$M, e.$D);
-      } else if (type == 'boolean') {
-        newFilterValues[index][name] = oldValue == '' || oldValue == false ? true : false 
+      } else if (type === 'boolean') {
+        newFilterValues[index][name] = oldValue === '' || oldValue === false ? true : false 
       } else {
         newFilterValues[index][name] = e.target.value
       }
@@ -196,7 +178,7 @@ const PolicyCreate = () => {
       filterSchema[resource].filterOptions.forEach((option) => {
         filterSchema[resource].filterDetails[option].filterList.forEach((filter) => {
           let filterInfo = filterSchema[resource].filterDetails[option].filterInfo[filter]
-          if (filterInfo.type == 'int') {
+          if (filterInfo.type === 'int') {
             let key = resource + '-' + option + '-' + filter
             if (filterInfo.validations) {
               integerKeys.push({key: key, validations: filterInfo.validations})
@@ -259,10 +241,10 @@ const PolicyCreate = () => {
               optionsElement.push(
                 textField(filterValue[option], onFilterValueChange, metadata.displayName, option, index3, resource, index2)
               )            
-            } else if (metadata && metadata.type == 'date') {
+            } else if (metadata && metadata.type === 'date') {
               optionsElement.push(dateField(filterValue[option], onFilterValueChange, metadata.displayName, option, index3, resource, index2))
 
-            } else if (metadata && metadata.type == 'boolean') {
+            } else if (metadata && metadata.type === 'boolean') {
               optionsElement.push(booleanField(filterValue[option], onFilterValueChange, metadata.displayName, option, index3, resource, index2))
 
             }
@@ -343,8 +325,6 @@ const PolicyCreate = () => {
     }
     setTempResource(e.target.value)
   }
-
-  const resources = ['s3', 'ec2']
 
   let currentFilter = []
 

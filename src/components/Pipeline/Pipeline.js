@@ -2,13 +2,11 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  DialogContentText
 } from '@mui/material';
 
 import Reports from "../Reports";
 import React, { useState, useEffect, useCallback } from "react";
-import { Grid, Paper, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 
 import { useDispatch } from "react-redux";
 import { userProfileDispatch, retrievePipelinesDispatch, deletePipelineDispatch, retrievePoliciesDispatch } from "../../utils/api-calls";
@@ -17,7 +15,7 @@ import Menu from "../Menu";
 import "./pipeline.css";
 import { Button } from '@mui/material';
 
-import { GrEdit, GrTrash, GrArticle } from "react-icons/gr";
+import { GrTrash, GrArticle } from "react-icons/gr";
 
 const Pipeline = () => {
   const userProfileState = {
@@ -32,7 +30,6 @@ const Pipeline = () => {
   const [policiesList, setPoliciesList] = useState([]);
   const [refreshPage, setRefreshPage] = useState(true);
   const [reportPL, setReportPL] = useState({})
-  const [showReport, setShowReport] = useState(false)
 
   const handleClickOpen = (pl) => {
     if (open) {
@@ -68,9 +65,6 @@ const Pipeline = () => {
     initFetch()
   }, [initFetch])
 
-  const editPipeline = function (pipelineID) {
-    console.log('edit ', pipelineID)
-  }
 
   const delPipeline = function (pipelineID, defaultPL) {
     if (defaultPL) {
@@ -92,7 +86,7 @@ const Pipeline = () => {
       return pipelinesList.map((pl, index) => {
 
         let reportEl = null;
-        if (pl.piplineid == reportPL.piplineid) {
+        if (pl.piplineid === reportPL.piplineid) {
           reportEl = (
             <Reports pipeline={reportPL} policies={policiesList} />
           )
@@ -100,7 +94,7 @@ const Pipeline = () => {
 
         return (
           <div key={index}>
-            <div key={index} className={index % 2 == 0 ? 'even-line pipeline' : 'odd-line pipeline'}>
+            <div key={index} className={index % 2 === 0 ? 'even-line pipeline' : 'odd-line pipeline'}>
               <Grid container spacing={2}>
                 <Grid item xs={10}>
                   {pl.piplinename}

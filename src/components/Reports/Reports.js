@@ -1,24 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { userProfileDispatch, deletePolicyDispatch, retrievePoliciesDispatch, retrieveReportsDispatch } from "../../utils/api-calls";
+import { retrieveReportsDispatch } from "../../utils/api-calls";
 import 'react-js-cron/dist/styles.css'
 import "./reports.css";
-import { Button } from '@mui/material';
 import { Grid } from '@mui/material';
-import { GrEdit, GrTrash } from "react-icons/gr";
 
 const Reports = (props) => {
   const dispatch = useDispatch();
   const [reports, setReports] = useState([])
   const [refreshPage, setRefreshPage] = useState(true);
-  const [sortOrder, setSortOrder] = useState({})
-  const [filterOptions, setFilters] = useState({})
   const [filterValues, setFilterValues] = useState({})
-
-  const reloadPage = function () {
-    setRefreshPage(true)
-  }
 
   const setPolicyReport = function(report) {
     setReports(report)
@@ -28,22 +20,15 @@ const Reports = (props) => {
     retrieveReportsDispatch(dispatch, props.pipeline.piplineid, setPolicyReport, setFilterValues)
     setRefreshPage(false)
   }
-  const handleArray = function(report) {
-
-  }
-
-  const handleJSON = function(report) {
-
-  }
 
   const getKeys = function(results) {
     let tempKeys = Object.keys(results)
     let resultKeys = []
     tempKeys.forEach((key) => {
-      if(typeof(results[key]) == "string") {
+      if(typeof(results[key]) === "string") {
         resultKeys.push(key)
-      } else if(typeof(results[key] == "object")){
-        if (results[key].length == undefined) {
+      } else if(typeof(results[key] === "object")){
+        if (results[key].length === undefined) {
           Object.keys(results[key]).forEach((nestedKey) => {
             resultKeys.push(key + "." + nestedKey)
           })
@@ -57,9 +42,9 @@ const Reports = (props) => {
 
   const getPolicyInfo = function(policyID) {
     let policyInfo = props.policies.filter((policy) => {
-      return policy.policyid == policyID;
+      return policy.policyid === policyID;
     })
-    if (policyInfo.length == 1) {
+    if (policyInfo.length === 1) {
       return policyInfo[0].policyname
     }
   }
@@ -88,12 +73,8 @@ const Reports = (props) => {
             reports.map((report, index) => {
               let reportBody = []
               if (report.resultlist.length != 0) {
-                let allReportElement = []
                 let keys = ['Region'];
-                let allResults = []
                 keys.push(...report.displayDefinition.displayOrder)
-
-                let tableColumns = report.results.length > 0 ? Object.keys(report.results[0]) : [];
                 let tableData = report.results;
 
                 let curFilters = filtersChanged && filters[report.policyid] ? filters[report.policyid] : {}
@@ -155,7 +136,7 @@ const Reports = (props) => {
                           </div>
                         </div>
                       }
-                      { reportBody.length == 0 && <div>No reports available</div>}
+                      { reportBody.length === 0 && <div>No reports available</div>}
                     </div>
                   </div>                      
                 )
@@ -167,8 +148,6 @@ const Reports = (props) => {
       )
     }  
   }
-
-  let policiesListEl = null;
 
   return (
     <div className="list row">

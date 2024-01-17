@@ -7,7 +7,7 @@ import Menu from "../../Menu";
 import "./policyList.css";
 import { Button } from '@mui/material';
 
-import { GrEdit, GrTrash } from "react-icons/gr";
+import { GrTrash } from "react-icons/gr";
 
 const PolicyList = () => {
   const userProfileState = {
@@ -37,17 +37,9 @@ const PolicyList = () => {
     initFetch()
   }, [initFetch])
 
-  const editPipeline = function (policyID) {
-    console.log('edit ', policyID)
-  }
-
   const deletePipeline = function (policyID) {
     console.log('delete ', policyID)
     deletePolicyDispatch(dispatch, {id: policyID}, reloadPage)
-  }
-
-  const addPipeline = function() {
-    console.log("In Add")
   }
 
   let policiesListEl = function() {

@@ -140,10 +140,6 @@ const PipelineSetup = () => {
 
   };
 
-  const editPipeline = function (pipelineID) {
-    console.log('edit ', pipelineID)
-  }
-
   let screen1 = function(step) {
     // TODO: Fetch from API
     // const regions = ['us-east', 'us-west', 'eu-lon']

@@ -36,7 +36,7 @@ const LandingPage = () => {
   }
 
   const setUserPwd2 = function(e) {
-    if(e.target.value != user.password) {
+    if(e.target.value !== user.password) {
       setUser({ ...user, reenterError: true, password2: e.target.value})
     }
     else {
@@ -66,7 +66,7 @@ const LandingPage = () => {
 
   const registerUser = () => {
     console.log(user)
-    if (user.password == user.password2) {
+    if (user.password === user.password2) {
       dispatch(register({login: user.login, password: user.password}))
       .unwrap()
       .then(data => {
@@ -117,7 +117,7 @@ const LandingPage = () => {
           /> <br />
 
           {
-            uiOption == "register" &&
+            uiOption === "register" &&
             <div>
               <FilledInput size="small" label="Re-enter Password" className="user-login" required type={user.showPassword ? "text" : "password"} value={user.password2} placeholder="******" onChange={setUserPwd2} 
                 endAdornment={
@@ -132,7 +132,7 @@ const LandingPage = () => {
           }
           {
 
-            uiOption == "login" && 
+            uiOption === "login" && 
             <div>
               <Button type="submit" variant="contained" onClick={loginUser}>Login</Button> <br />
               {user.succesfulLogin && <Navigate to='/home'  /> }
@@ -143,7 +143,7 @@ const LandingPage = () => {
           }
           {
 
-            uiOption == "register" && 
+            uiOption === "register" && 
             <div>
               <Button type="submit" disabled={user.reenterError} variant="contained" onClick={registerUser}>Register</Button> <br />
               {user.reenterError && <div>Passwords do not match</div>}
@@ -154,13 +154,13 @@ const LandingPage = () => {
             </div>
           }          
           {
-            uiOption == "login" && 
+            uiOption === "login" && 
             <div>
               New User? <a className="pointer" onClick={(e) => onRegisterClick()}>Register</a>
             </div>
           }
           {
-            uiOption == "register" && 
+            uiOption === "register" && 
             <div>
               Already a user? <a className="pointer" onClick={(e) => onLoginClick()}>Login</a>
             </div>

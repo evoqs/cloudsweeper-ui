@@ -5,7 +5,7 @@ import { retrieveAccountsDispatch, addAccountDispatch, deleteAccountDispatch } f
 import Menu from "../Menu";
 import "./accounts.css";
 import { Box, Button, TextField } from '@mui/material';
-import { GrEdit, GrTrash } from "react-icons/gr";
+import { GrTrash } from "react-icons/gr";
 
 
 const Accounts = () => {
@@ -45,10 +45,6 @@ const Accounts = () => {
   const submitAWSCreds = function() {
     console.log(awsCreds)
     addAccountDispatch(dispatch, {accountid: "1033", accounttype: "aws", description: awsCreds.name, aws_access_key_id: awsCreds.accessKey, aws_secret_access_key: awsCreds.secret, aws_region: awsCreds.region}, reloadPage)
-  }
-
-  const editAccount = function (accountID) {
-    console.log('edit ', accountID)
   }
 
   const deleteAccount = function (accountID) {
