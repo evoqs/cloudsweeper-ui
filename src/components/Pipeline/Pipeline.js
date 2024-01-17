@@ -32,10 +32,16 @@ const Pipeline = () => {
   const [policiesList, setPoliciesList] = useState([]);
   const [refreshPage, setRefreshPage] = useState(true);
   const [reportPL, setReportPL] = useState({})
+  const [showReport, setShowReport] = useState(false)
 
   const handleClickOpen = (pl) => {
-    setReportPL(pl)
-    setOpen(true);
+    if (open) {
+      setOpen(false);
+      setReportPL({})
+    } else {
+      setReportPL(pl)
+      setOpen(true);
+    }
   };
 
   const handleClose = (e) => {
@@ -75,12 +81,6 @@ const Pipeline = () => {
     }
   }
 
-  const showReport = function(pl) {
-    console.log(pl)
-    setReportPL(pl)
-    alert(pl.policies.join(', '))
-  }
-
   let pipelinesListEl = function() {
     if (pipelinesList.length === 0) {
       return(
@@ -90,17 +90,29 @@ const Pipeline = () => {
       )
     } else {
       return pipelinesList.map((pl, index) => {
+
+        let reportEl = null;
+        if (pl.piplineid == reportPL.piplineid) {
+          reportEl = (
+            <Reports pipeline={reportPL} policies={policiesList} />
+          )
+        }
+
         return (
-          <div key={index} className={index % 2 == 0 ? 'even-line pipeline' : 'odd-line pipeline'}>
-            <Grid container spacing={2}>
-              <Grid item xs={10}>
-                {pl.piplinename}
+          <div key={index}>
+            <div key={index} className={index % 2 == 0 ? 'even-line pipeline' : 'odd-line pipeline'}>
+              <Grid container spacing={2}>
+                <Grid item xs={10}>
+                  {pl.piplinename}
+                </Grid>
+                <Grid item xs={2}>
+                  <GrArticle className="pointer" onClick={(e) => handleClickOpen(pl)} />
+                  {!pl.default && <GrTrash className="pointer" onClick={() => delPipeline(pl.piplineid, pl.default)}  />}
+                </Grid>
               </Grid>
-              <Grid item xs={2}>
-                <GrArticle className="pointer" onClick={(e) => handleClickOpen(pl)} />
-                {!pl.default && <GrTrash className="pointer" onClick={() => delPipeline(pl.piplineid, pl.default)}  />}
-              </Grid>
-            </Grid>
+              
+            </div>
+            {reportEl}
           </div>
         )
       })
@@ -118,11 +130,11 @@ const Pipeline = () => {
       </div>      
       <div className="col-md-10">
         <Button type="submit" variant="contained"><a href="/pipelines/create" className="create-pipeline-btn">Create Pipeline</a></Button><br /><br />
-        {pipelinesListEl()}        
+        {pipelinesListEl()}
       </div>
 
       <Dialog
-        open={open}
+        open={false}
         onClose={(e) => handleClose(e)}
         className="reports-container"
         aria-labelledby="alert-dialog-title"

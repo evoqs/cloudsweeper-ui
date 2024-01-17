@@ -19,6 +19,14 @@ export const retrievePolicyStructure = createAsyncThunk(
   }
 );
 
+export const retrieveRegions = createAsyncThunk(
+  "pipelines/regions",
+  async () => {
+    const res = await PipelinesService.getRegions();
+    return res.data;
+  }
+)
+
 export const deletePipeline = createAsyncThunk(
   "pipelines/delete",
   async ({id}) => {
@@ -46,6 +54,9 @@ const pipelinesSlice = createSlice({
       return [...action.payload];
     },
     [retrievePolicyStructure.fulfilled]: (state, action) => {
+      return [...action.payload]
+    },
+    [retrieveRegions.fulfilled]: (state, action) => {
       return [...action.payload]
     }
   },

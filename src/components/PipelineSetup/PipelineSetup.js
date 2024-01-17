@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { retrieveAccountsDispatch, retrievePoliciesDispatch, addPipelineDispatch } from "../../utils/api-calls";
+import { retrieveAccountsDispatch, retrievePoliciesDispatch, addPipelineDispatch, retrieveRegionsDispatch } from "../../utils/api-calls";
 import { Cron } from 'react-js-cron'
 import 'react-js-cron/dist/styles.css'
 import Menu from "../Menu";
@@ -25,6 +25,7 @@ const PipelineSetup = () => {
 
   const [allAccountsList, setAccountsList] = useState([]);
   const [policiesList, setPoliciesList] = useState([]);
+  const [regions, setRegions] = useState([])
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
@@ -32,6 +33,7 @@ const PipelineSetup = () => {
   const initFetch = useCallback(() => {
     retrieveAccountsDispatch(dispatch, setAccountsList)
     retrievePoliciesDispatch(dispatch, setPoliciesList)
+    retrieveRegionsDispatch(dispatch, setRegions)
   }, [dispatch])
 
   useEffect(() => {
@@ -144,7 +146,7 @@ const PipelineSetup = () => {
 
   let screen1 = function(step) {
     // TODO: Fetch from API
-    const regions = ['us-east', 'us-west', 'eu-lon']
+    // const regions = ['us-east', 'us-west', 'eu-lon']
     return (
       step === 0 && 
       <div> <br /><br />
@@ -186,7 +188,7 @@ const PipelineSetup = () => {
             regions.map((region, index) => {
               return (
                 <MenuItem key={index}>
-                  <FormControlLabel value={region} control={<Checkbox onChange={(e) => updateRegions(e)} checked={screen1Info.regions.includes(region)} />} label={region} />
+                  <FormControlLabel value={region.RegionName} control={<Checkbox onChange={(e) => updateRegions(e)} checked={screen1Info.regions.includes(region.RegionName)} />} label={region.RegionName} />
                 </MenuItem>
               )
             })

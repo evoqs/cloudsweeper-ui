@@ -1,13 +1,14 @@
 import { Button } from '@mui/material';
 import "./menu.css";
+import { GrScheduleNew, GrCloudSoftware, GrCli } from "react-icons/gr";
 
 const Menu = () => {
   return (
     <div className="list row">
-      <Button key="1" className="menu-button" href="/accounts">Accounts</Button>
-      <Button key="2" className="menu-button" href="/pipelines">Pipelines</Button>
-      <Button key="3" className="menu-button" href="/policies">Policies</Button>
-      <Button key="4" className="menu-button" href="/reports">Reports</Button>
+      <br /><br />
+      <span><Button key="1" className="menu-button" href="/accounts"><GrCloudSoftware className='menu-icon' /> Accounts</Button></span>
+      <span><Button key="2" className="menu-button" href="/pipelines"><GrScheduleNew className='menu-icon' /> Pipelines</Button></span>
+      <span><Button key="3" className="menu-button" href="/policies"><GrCli className='menu-icon' /> Policies</Button></span>
     </div>
   );
 };

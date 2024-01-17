@@ -37,3 +37,15 @@
 .margin-6 {
 	margin-top: 18px !important;
 }
+
+.date-picker {
+	display: inline-block;
+	margin-right: 12px !important;
+	margin-left: 12px !important;
+	width: 180px;
+}
+
+.date-picker .MuiOutlinedInput-root {
+	height: 42px;
+	vertical-align: middle;
+}

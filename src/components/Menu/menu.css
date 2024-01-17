@@ -5,3 +5,9 @@
 .menu-button {
 	text-transform: capitalize !important;
 }
+
+.menu-icon {
+	margin-right: 6px;
+	width: 18px;
+	height: 18px;
+}

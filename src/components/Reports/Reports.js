@@ -9,10 +9,13 @@ import { Grid } from '@mui/material';
 import { GrEdit, GrTrash } from "react-icons/gr";
 
 const Reports = (props) => {
-  console.log(props)
   const dispatch = useDispatch();
   const [reports, setReports] = useState([])
   const [refreshPage, setRefreshPage] = useState(true);
+  const [sortOrder, setSortOrder] = useState({})
+  const [filterOptions, setFilters] = useState({})
+  const [filterValues, setFilterValues] = useState({})
+
   const reloadPage = function () {
     setRefreshPage(true)
   }
@@ -21,34 +24,10 @@ const Reports = (props) => {
     setReports(report)
   }
 
-  console.log(reports)
-
   if (refreshPage) {
-    retrieveReportsDispatch(dispatch, props.pipeline.piplineid, setPolicyReport)  
+    retrieveReportsDispatch(dispatch, props.pipeline.piplineid, setPolicyReport, setFilterValues)
     setRefreshPage(false)
   }
-/*
-  let policiesListEl = function() {
-    if (policiesList.length === 0) {
-      return(
-        <div>
-          No pipelines available
-        </div>
-      )
-    } else {
-      return policiesList.map((pl, index) => {
-        return (
-          <div key={index}>
-            {pl.policyid} - {pl.policyname} 
-            {pl.policytype !== 'Default' && <GrTrash className="pointer" onClick={() => deletePipeline(pl.policyid)} /> }
-          </div>
-        )
-      })
-
-    }
-  }
-*/
-
   const handleArray = function(report) {
 
   }
@@ -56,8 +35,6 @@ const Reports = (props) => {
   const handleJSON = function(report) {
 
   }
-
-
 
   const getKeys = function(results) {
     let tempKeys = Object.keys(results)
@@ -87,92 +64,109 @@ const Reports = (props) => {
     }
   }
 
-  const getPropByString = function(obj, propString) {
-    if (!propString)
-      return obj;
+  const [filters, setFilterOptionValues] = useState({});
+  const [filtersChanged, setFilterChanged] = useState((new Date()).toString());
 
-    var prop, props = propString.split('.');
-
-    for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
-      prop = props[i];
-
-      var candidate = obj[prop];
-      if (candidate !== undefined) {
-        obj = candidate;
-      } else {
-        break;
-      }
+  const handleFilterChange = (policyid, columnName, selectedValue) => {
+    let curFilters = filters;
+    if (!curFilters[policyid]) {
+      curFilters[policyid] = {}
     }
-    return obj[props[i]];
-  }
+    curFilters[policyid][columnName] = selectedValue
+    setFilterOptionValues(curFilters);
+    setFilterChanged((new Date()).toString())
+  };
 
 
   let reportsEl = function () {
     if (reports.length === 0) {
-      console.log("Empty reports")
       return (<div> No Reports Available </div>)
     } else {
       return (
         <div>
           {
             reports.map((report, index) => {
-              return (
-                <div key={index}>
-                <div>
-                  <strong>Resource:</strong> {report.resource}<br />
-                  <strong>Last Run:</strong> {report.lastruntime}<br />
-                  <strong>Status:</strong> {report.lastrunstatus}<br />
-                  <strong>Policy:</strong> {getPolicyInfo(report.policyid)} <br />
-                  {
-                    report.resultlist.map((result, index2) => {
+              let reportBody = []
+              if (report.resultlist.length != 0) {
+                let allReportElement = []
+                let keys = ['Region'];
+                let allResults = []
+                keys.push(...report.displayDefinition.displayOrder)
 
-                      const keys = getKeys(JSON.parse(result.result)[0])
-                      return (
-                        <div key={index2}>
+                let tableColumns = report.results.length > 0 ? Object.keys(report.results[0]) : [];
+                let tableData = report.results;
+
+                let curFilters = filtersChanged && filters[report.policyid] ? filters[report.policyid] : {}
+                Object.keys(curFilters).forEach((filter) => {
+                  tableData = tableData.filter((row) => curFilters[filter] ? row[filter] === curFilters[filter] : true)
+                })
+                reportBody = tableData.map((result, index2) => {
+                  let row = keys.map((key, index3) => {
+                    let output = result[key]
+                    return (
+                      <td key={index3}>{output.toString()}</td>
+                    )
+                  })
+                  return (
+                    <tr key={index2}>
+                      {row}
+                    </tr>
+                  )
+                })
+                return (
+                  <div key={index}>
+                    <div>
+                      <strong>Resource:</strong> {report.resource}<br />
+                      <strong>Last Run:</strong> {report.lastruntime}<br />
+                      <strong>Status:</strong> {report.lastrunstatus}<br />
+                      <strong>Policy:</strong> {getPolicyInfo(report.policyid)} <br /><br />
+                      { reportBody.length != 0 && 
+                        <div key={index}>
                           <div>
-                            <br /><strong>Region:</strong> {result.region}<br />
-                            {
-                              JSON.parse(result.result).map((regionResult, index3) => {
-                                return (
-                                  <div key={index3}>
-                                    {
-                                      keys.map((key, index4) => {
-                                        console.log(key, getPropByString(regionResult, key))
-                                        let output = getPropByString(regionResult, key);
-                                        if (typeof(output) != "string") {
-                                          output = ""
-                                        }
-                                        return (
-                                          <div key={index4}>
-                                            {key} - {output}
-                                          </div>
-                                        )
-                                      })
-                                    }
-                                    <hr />
-                                  </div>
-                                )
-                              })
-                            }
+                            <table border="1">
+                              <thead>
+                                <tr>
+                                  {keys.map((key, index3) => {
+                                    let fvalue = filters[report.policyid] && filters[report.policyid][key] ? filters[report.policyid][key] : ''
+                                    return (
+                                      <th key={key} >
+                                        {report.displayDefinition.displayName[key] ? report.displayDefinition.displayName[key] : key}
+                                        <select className='filter-dropdown'
+                                          onChange={(e) => handleFilterChange(report.policyid, key, e.target.value)}
+                                          value={fvalue}
+                                        >
+                                          <option value="">All</option>
+                                          {filterValues[report.policyid][key].map((value) => (
+                                            <option key={value} value={value}>
+                                              {value}
+                                            </option>
+                                          ))}
+                                        </select>                                        
+                                      </th>
+                                    )
+                                  })}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {reportBody}
+                              </tbody>
+                            </table>
+                            <hr />
                           </div>
-                          <hr />
                         </div>
-                      )
-                    })
-                  }
-                </div>
-                <hr />
-                </div>
-              )
+                      }
+                      { reportBody.length == 0 && <div>No reports available</div>}
+                    </div>
+                  </div>                      
+                )
+              }
             })
           }
+          <hr />
         </div>
       )
-    }
+    }  
   }
-
-
-  
 
   let policiesListEl = null;
 

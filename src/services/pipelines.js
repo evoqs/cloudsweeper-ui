@@ -9,6 +9,10 @@ class PipelinesService {
     return http.get("/api/gw/dummy-json");
   }
 
+  getRegions() {
+    return http.get("/api/gw/regions");
+  }
+
   addPipeline(cloudAccID, pipelineName, policies, schedule, execregions, enabled) {
     console.log(cloudAccID, pipelineName, policies, schedule, execregions, enabled)
     let scheduleArr = schedule.split(' ')

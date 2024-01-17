@@ -1,5 +1,5 @@
 import { retrieveAccounts, addAccount, deleteAccount } from "../slices/accounts";
-import { retrievePipelines, deletePipeline, addPipeline } from "../slices/pipelines"
+import { retrievePipelines, deletePipeline, addPipeline, retrieveRegions } from "../slices/pipelines"
 import { retrievePolicies, deletePolicy } from "../slices/policies"
 import { retrieveReports } from "../slices/reports";
 import { userProfile } from "../slices/home";
@@ -95,6 +95,17 @@ const deletePipelineDispatch = function (dispatch, {id}, reloadPage) {
   })
 }
 
+const retrieveRegionsDispatch = function (dispatch, setRegions) {
+  dispatch(retrieveRegions())
+  .unwrap()
+  .then(data => {
+    setRegions(data.regions)
+  })
+  .catch(e => {
+    console.log(e)
+  })
+}
+
 
 // fetch policies
 const retrievePoliciesDispatch = function (dispatch, setPoliciesList) {
@@ -124,11 +135,27 @@ const deletePolicyDispatch = function (dispatch, {id}, reloadPage) {
 }
 
 // fetch policies
-const retrieveReportsDispatch = function (dispatch, pipelineID, setPoliciesList) {
+const retrieveReportsDispatch = function (dispatch, pipelineID, setPoliciesList, setFilterValues) {
   dispatch(retrieveReports({pipelineID}))
   .unwrap()
   .then(data => {
     setPoliciesList(data)
+    let filters = {}
+    data.forEach((report) => {
+      let policyFilters = {}
+      report.results.forEach((result) => {
+        Object.keys(result).forEach((key) => {
+          if(!policyFilters[key]) {
+            policyFilters[key] = []
+          }
+          if(policyFilters[key].indexOf(result[key]) == -1) {
+            policyFilters[key].push(result[key])
+          }
+        })
+      })
+      filters[report.policyid] = policyFilters
+    })
+    setFilterValues(filters)
   })
   .catch(e => {
     console.log(e)
@@ -147,5 +174,6 @@ export {
   deletePipelineDispatch,
   retrievePoliciesDispatch,
   deletePolicyDispatch,
-  retrieveReportsDispatch
+  retrieveReportsDispatch,
+  retrieveRegionsDispatch
 }
