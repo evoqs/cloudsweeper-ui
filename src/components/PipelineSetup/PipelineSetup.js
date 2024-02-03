@@ -14,13 +14,14 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Typography from '@mui/material/Typography';
 
-const steps = ['Pipeline info', 'Select Filters', 'Schedule', 'Summary'];
+const steps = ['Pipeline info', 'Select Filters', 'Schedule', 'Notification', 'Summary'];
 
 const PipelineSetup = () => {
   const dispatch = useDispatch();
 
   const [screen1Info, setScreen1Info] = useState({plName: '', account: '', regions: [], accountName: ''})
   const [screen2Info, setScreen2Info] = useState({policies: [], policyNames: []})
+  const [notificationInfo, setNotificationInfo] = useState({email: '', slack: '', webhook: ''})
   const [timerValue, setValue] = useState('30 5 * * *')
 
   const [allAccountsList, setAccountsList] = useState([]);
@@ -76,6 +77,10 @@ const PipelineSetup = () => {
     setScreen2Info({...screen2Info, policies: policies, policyNames: policyNames})
   }
 
+  const handleNotificationInfoChange = (e, key) => {
+    setNotificationInfo({...notificationInfo, [key]: e.target.value})
+  }
+
   const handlePlNameChange = (e) => {
     setScreen1Info({...screen1Info, plName: e.target.value})
   }
@@ -99,7 +104,20 @@ const PipelineSetup = () => {
       }
     }
 
-    if(activeStep === 3) {
+    if (activeStep == 3) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (notificationInfo.email != '') {
+        let emails = notificationInfo.email.split(',')
+        emails.forEach((email) => {
+          if (emailRegex.test(email) == false) {
+            alert("Enter valid email");
+            flag = false;
+          }
+        })
+      } 
+    }
+
+    if(activeStep === 4) {
       addPipelineDispatch(dispatch, screen1Info.account, screen1Info.plName, screen2Info.policies, timerValue, screen1Info.regions, true, redirectPage)
     }
 
@@ -240,8 +258,21 @@ const PipelineSetup = () => {
     )
   }
 
+  let notificationScreen = function(step) {
+    return (step == 3 && 
+      <div>
+        <br /><br />
+        {/*
+          <TextField placeholder="Slack" value={notificationInfo.slack} onChange={(e) => handleNotificationInfoChange(e, 'slack')} id="slack" label="Slack" variant="outlined" className="notification-info" size="small" /> <br /><br />
+          <TextField placeholder="Webhook" value={notificationInfo.webhook} onChange={(e) => handleNotificationInfoChange(e, 'webhook')} id="webhook" label="Webhook" variant="outlined" className="notification-info" size="small" /> <br /><br />
+        */}
+        <TextField placeholder="email" value={notificationInfo.email} onChange={(e) => handleNotificationInfoChange(e, 'email')} id="email" label="Email for notification" variant="outlined" className="notification-info" size="small" /> <br /><br />
+      </div>
+    )
+  }
+
   let screen4 = function(step) {
-    return (step === 3 && 
+    return (step === 4 && 
       <div>
         <Typography sx={{ mt: 2, mb: 1 }}>Step 4</Typography>
         Overview - summary
@@ -253,7 +284,9 @@ const PipelineSetup = () => {
         <strong>Policies: </strong>  {screen2Info.policyNames.join(", ")}<br /><br />
 
         Timer Details: {timerValue} <br /><br />
-        <Cron value={timerValue} setValue={setValue} disabled={true} allowClear={false} />
+        <Cron value={timerValue} setValue={setValue} disabled={true} allowClear={false} /><br /><br />
+        <strong>Notification Details:</strong> { notificationInfo.email && <div>{notificationInfo.email}</div> }
+
       </div>
     )
   }
@@ -302,6 +335,7 @@ const PipelineSetup = () => {
               {screen1(activeStep)}
               {screen2(activeStep)}
               {screen3(activeStep)}
+              {notificationScreen(activeStep)}
               {screen4(activeStep)}
 
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
