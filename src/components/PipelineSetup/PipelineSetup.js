@@ -118,7 +118,7 @@ const PipelineSetup = () => {
     }
 
     if(activeStep === 4) {
-      addPipelineDispatch(dispatch, screen1Info.account, screen1Info.plName, screen2Info.policies, timerValue, screen1Info.regions, true, redirectPage)
+      addPipelineDispatch(dispatch, screen1Info.account, screen1Info.plName, screen2Info.policies, timerValue, screen1Info.regions, notificationInfo.email, true, redirectPage)
     }
 
     if (flag) {

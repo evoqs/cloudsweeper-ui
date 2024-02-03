@@ -13,7 +13,7 @@ class PipelinesService {
     return http.get("/api/gw/regions");
   }
 
-  addPipeline(cloudAccID, pipelineName, policies, schedule, execregions, enabled) {
+  addPipeline(cloudAccID, pipelineName, policies, schedule, execregions, email, enabled) {
     console.log(cloudAccID, pipelineName, policies, schedule, execregions, enabled)
     let scheduleArr = schedule.split(' ')
     let data = {
@@ -22,7 +22,8 @@ class PipelinesService {
       policies, //array of str
       schedule: {"minute": scheduleArr[0], "hour": scheduleArr[1], "dayofmonth": scheduleArr[2], "month": scheduleArr[3], "dayofweek": scheduleArr[4]}, // {"minute":"*", "hour":"1","dayofmonth":"*","month":"*","dayofweek":"*"}
       enabled, // boolean
-      execregions
+      execregions,
+      notifications: {emailAddresses: email.split(','), slackUrls: [], webhookUrls: []}
     }
     return http.post("/api/gw/pipeline", data)
   }

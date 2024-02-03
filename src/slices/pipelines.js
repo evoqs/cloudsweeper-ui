@@ -38,9 +38,9 @@ export const deletePipeline = createAsyncThunk(
 
 export const addPipeline = createAsyncThunk(
   "pipelines/add",
-  async({cloudAccID, pipelineName, policies, schedule, execregions, enabled}) => {
-    console.log(cloudAccID, pipelineName, policies, schedule, execregions, enabled)
-    const res = await PipelinesService.addPipeline(cloudAccID, pipelineName, policies, schedule, execregions, enabled)
+  async({cloudAccID, pipelineName, policies, schedule, execregions, email, enabled}) => {
+    console.log(cloudAccID, pipelineName, policies, schedule, execregions, email, enabled)
+    const res = await PipelinesService.addPipeline(cloudAccID, pipelineName, policies, schedule, execregions, email, enabled)
     return res.data
   }
 

@@ -67,9 +67,9 @@ const retrievePipelinesDispatch = function (dispatch, setPipelinesList) {
   })
 }
 // add pipelines
-const addPipelineDispatch = function (dispatch, cloudAccID, pipelineName, policies, schedule, execregions, enabled, handler) {
-  console.log(cloudAccID, pipelineName, policies, schedule, execregions, enabled)
-  dispatch(addPipeline({cloudAccID, pipelineName, policies, schedule, execregions, enabled}))
+const addPipelineDispatch = function (dispatch, cloudAccID, pipelineName, policies, schedule, execregions, email, enabled, handler) {
+  console.log(cloudAccID, pipelineName, policies, schedule, execregions, email, enabled)
+  dispatch(addPipeline({cloudAccID, pipelineName, policies, schedule, execregions, email, enabled}))
   .unwrap()
   .then(data => {
     console.log("created pipeline")
